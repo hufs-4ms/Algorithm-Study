@@ -19,7 +19,7 @@ public class Main {
         while(n>1){
             r *= n;
             r %= p;
-            n--;   
+            n--;
         }
         return r;
     }
