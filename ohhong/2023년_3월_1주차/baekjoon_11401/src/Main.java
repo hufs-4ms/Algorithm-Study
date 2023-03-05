@@ -25,7 +25,6 @@ public class Main {
     }
     public static long part(long n, long k){
         long result = 1;
-
         while(k >0){
                 if(k%2 == 1){
                     result *= n;
