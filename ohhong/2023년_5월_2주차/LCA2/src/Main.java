@@ -4,11 +4,11 @@ public class Main {
     static List<List<Integer>> arr = new ArrayList<>();  // 트리를 저장하는 2차원 리스트
     static int[] depth;  // 방문한 노드를 체크하는 배열
     static int[] tree;  // 세그먼트 트릴르 저장하는 배열
-    static List<Integer> tour = new ArrayList<>();
-    static Map<Integer, Integer> node_index = new HashMap<>();
-    static int node_i;
-    static int[] depth_tour;
-    static int[] euler_tour;
+    static List<Integer> tour = new ArrayList<>();  // 노드를 지나간 경로를 나타내는 리스트
+    static Map<Integer, Integer> node_index = new HashMap<>();  // 노드의 Index를 저장하는 HashMap
+    static int node_i;  // 노드를 지나간 경로의 순서를 나타내는 index
+    static int[] depth_tour;  // 노드를 지나간 경로에서 깊이를 나타내는 배열
+    static int[] euler_tour;  // 노드를 지나간 경로에서 노드를 나타내는 배열
     public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st;
@@ -29,35 +29,35 @@ public class Main {
             arr.get(P_node).add(node);
         }
 
-        dfs(0, 0);
+        dfs(0, 0);  // depth배열과 tour, node_index를 구하는 과정에서 시간복잡도 O(n)
 
-        int tour_size = tour.size();
+        int tour_size = tour.size();  // 노드를 지나간 경로를 가지고 새로운 배열들 초기화
         depth_tour = new int[tour_size];
         euler_tour = new int[tour_size];
         tree = new int[tour_size*5];
-        for(int i=0;i<tour.size();i++){
+        for(int i=0;i<tour.size();i++){  // 노드의 깊이와 노드 번호를 저장(2n보다 적게 동작)
             depth_tour[i] = depth[tour.get(i)]+1;
             euler_tour[i] = tour.get(i)+1;
         }
 
-        build(1,0,tour_size-1);
+        build(1,0,tour_size-1);  // 세그먼트 트리를 사용하기 위해 tree 초기설정하는데 시간복잡도 O(n)
 
 
         StringBuilder sb = new StringBuilder();
         for(int i=0;i<q;i++){
-            st = new StringTokenizer(br.readLine(), " ");
+            st = new StringTokenizer(br.readLine(), " ");  // 노드 u와 v사이에 있는 조상 노드를 찾음
             int u = Integer.parseInt(st.nextToken());
             int v = Integer.parseInt(st.nextToken());
             int l, r;
-            if(node_index.get(u-1) < node_index.get(v-1)){
+            if(node_index.get(u-1) < node_index.get(v-1)){  // 노드 u, v의 index값을 확인하고 작은 index는 l, 큰 index는 r로 저장
                 l = node_index.get(u-1);
                 r = node_index.get(v-1);
             }else{
                 l = node_index.get(v-1);
                 r = node_index.get(u-1);
             }
-            int result = query(1, 0, tour_size-1, l, r);
-            sb.append(euler_tour[result]).append("\n");
+            int result = query(1, 0, tour_size-1, l, r);  // u의 index와 v의 index 사이에서 깊이가 제일 작은 index를 찾아서 해당 index의 노드를 저장
+            sb.append(euler_tour[result]).append("\n");  // query() 매소드는 시간복잡도 O(log n)
         }
         System.out.println(sb);
     }
@@ -70,7 +70,7 @@ public class Main {
     public static void dfs(int node, int cnt){
         depth[node] = cnt++;
         tour.add(node);
-        if(!node_index.containsKey(node)){
+        if(!node_index.containsKey(node)){  // 노드를 지나가는 경로를 구하면서 처음 지나가는 노드의 index값을 저장
             node_index.put(node, node_i);
         }
         node_i++;
